@@ -20,66 +20,66 @@ import time
 # return a list of property links and ids from search page
 
 
-def get_links(soup):
-    link_container = soup.find_all('a', {'class': 'propertyCard-headerLink'})
-    links = []
-    ids = []
-    rmpage = 'http://www.rightmove.co.uk'
-    for link in link_container:
-        links.append(rmpage+link['href'])
-        ids.append(re.findall(r'\d+', link['href'])[0])
-    return links, ids
+# def get_links(soup):
+#     link_container = soup.find_all('a', {'class': 'propertyCard-headerLink'})
+#     links = []
+#     ids = []
+#     rmpage = 'http://www.rightmove.co.uk'
+#     for link in link_container:
+#         links.append(rmpage+link['href'])
+#         ids.append(re.findall(r'\d+', link['href'])[0])
+#     return links, ids
 
 # download images given the url and file path
 
 
 def link_to_img(link, id, file_path, i=1):
     file_name = 'image-{}-{}.jpg'.format(id, i)
-    full_path = '{}{}'.format(file_path, file_name)
+    full_path = file_path+file_name
     urllib.request.urlretrieve(link, full_path)
     return None
 
 # a function takes in property links and downloads images and floor plans to local folder
 
 
-def get_img(links, ids):
-    file_path_img = 'images/'
-    file_path_fp = 'floorplan/'
-    for link, _id in zip(links, ids):
-        response = get(link)
-        soup = BeautifulSoup(response.text, 'lxml')
-        try:
-            fp_link = soup.find('img', src=lambda x: x and "FLP" in x)['src']
-            link_to_img(fp_link, _id, file_path_fp)
-        except:
-            print('No floor plan!')
-        img_links = get_img_links(soup)
-        for i, url in enumerate(img_links):
-            link_to_img(url, _id, file_path_img, i)
+# def get_img(links, ids):
+#     file_path_img = 'images/'
+#     file_path_fp = 'floorplan/'
+#     for link, _id in zip(links, ids):
+#         response = get(link)
+#         soup = BeautifulSoup(response.text, 'lxml')
+#         try:
+#             fp_link = soup.find('img', src=lambda x: x and "FLP" in x)['src']
+#             link_to_img(fp_link, _id, file_path_fp)
+#         except:
+#             print('No floor plan!')
+#         img_links = get_img_links(soup)
+#         for i, url in enumerate(img_links):
+#             link_to_img(url, _id, file_path_img, i)
 
-        time.sleep(5)
+#         time.sleep(5)
 
-    return None
+#     return None
 
 
 # from search page to property pages and scrape texts and store in SQL database
 def get_prop_data(links, ids):
-    print('There are {} listings today.', len(links))
+    print('There are {} listings today.'.format((len(links))))
     keys = []
     title = []
     price = []
     description = []
-    file_path_img = 'images/'
-    file_path_fp = 'floorplan/'
+    file_path_img = '../propertyimages/'
+    file_path_fp = '../floorplan/'
 
-    conn = sqlite3.connect('rightmove.db')
+    conn = sqlite3.connect('../database/rightmove.db')
     c = conn.cursor()
 
     n = 0
 
     for link, _id in zip(links, ids):
         n += 1
-        print('This is property number {}', n)
+        print('This is property number {}'.format(n))
         response = get(link)
         soup = BeautifulSoup(response.text, 'lxml')
         keys.append(_id)
@@ -118,6 +118,7 @@ def get_img_links(soup):
         links.append(tag['content'])
     return links
 
+
 # return property price on property page
 
 
@@ -128,9 +129,13 @@ def get_title(soup):
 
 
 def get_price(soup):
-    text = soup.find(lambda tag: tag.name == 'strong' and '£' in tag.text).text
-    price = int(Decimal(sub(r'[^\d.]', '', text)))
-    return price
+    try:
+        text = soup.find(lambda tag: tag.name ==
+                         'strong' and '£' in tag.text).text
+        price = int(Decimal(sub(r'[^\d.]', '', text)))
+        return price
+    except:
+        return 0
 
 # return the full description on property page
 
@@ -139,7 +144,7 @@ def get_desc(soup):
     return soup.find('p', {'itemprop': 'description'}).text.strip()
 
 
-url = "https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E87490&index=192&propertyTypes=&maxDaysSinceAdded=1&mustHave=&dontShow=&furnishTypes=&keywords="
+url = "https://www.rightmove.co.uk/property-for-sale/find.html?locationIdentifier=REGION%5E87490&propertyTypes=&maxDaysSinceAdded=1&includeSSTC=false&mustHave=&dontShow=&furnishTypes=&keywords="
 rm = RightmoveData(url)
 
 property_links = list(rm.get_results.url)

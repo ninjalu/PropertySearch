@@ -2,12 +2,12 @@ import sqlite3
 from sqlite3 import DatabaseError
 
 # create and connect to database
-conn = sqlite3.connect('rightmove.db')
+conn = sqlite3.connect('../database/rightmove.db')
 
 # create a table
 c = conn.cursor()
 
-c.execute( """CREATE TABLE rightmove (
+c.execute("""CREATE TABLE rightmove (
         id  TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         price INTEGER NOT NULL,
