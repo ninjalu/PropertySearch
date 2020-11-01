@@ -39,12 +39,14 @@ class Classifier(torch.nn.Module):
         return self.layers(x)
 
 
-def train(model, data_loader, epochs=1, lr=0.01):
+def train(model, data_loader, device, epochs=1, lr=0.01):
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
     writer = SummaryWriter(log_dir='runs')
     batch_idx = 0
     for epoch in range(epochs):
         for img, label in data_loader:
+            img = img.to(device)
+            label = label.to(device)
             pred = model(img)
             loss = F.cross_entropy(pred, label)
             loss.backward()
@@ -56,7 +58,10 @@ def train(model, data_loader, epochs=1, lr=0.01):
 
 
 cnn = Classifier()
-cnn.
-train(cnn, train_loader)
+# %%
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+cnn = cnn.to(device)
+
+train(cnn, train_loader, device)
 
 # %%
