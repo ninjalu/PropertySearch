@@ -67,6 +67,14 @@ def train(model, data_loader, device, epochs=10, lr=0.01):
             batch_idx += 1
             print('Loss:', loss.item())
 
+        print(cal_acc(pred, label))
+
+
+def cal_acc(pred, y):
+    pred_label = torch.argmax(pred, dim=1)
+    print(pred_label, y)
+    return torch.sum(pred_label == y)/len(y)
+
 
 cnn = Classifier()
 # %%
