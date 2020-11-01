@@ -4,44 +4,55 @@ from torchvision import transforms, models
 from torch.utils.tensorboard import SummaryWriter
 from house_dataset import ClassificationDataset
 import torch.nn.functional as F
+from time import time
 # %%
 data = ClassificationDataset(
     transform=transforms.Compose([
-        transforms.Resize((256, 256)),
+        transforms.Resize((64, 64)),
         transforms.ToTensor()
     ])
 )
 # %%
-batch_size = 16
+batch_size = 32
 train_loader = torch.utils.data.DataLoader(
     data,
     batch_size=batch_size,
     shuffle=True)
 
 # %%
+kernel_size = 7
+stride = 2
 
 
 class Classifier(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.layers = torch.nn.Sequential(
-            torch.nn.Conv2d(3, 16, kernel_size=7),
+            torch.nn.Conv2d(3, 16, kernel_size, stride),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(16, 32, 7),
+            torch.nn.Conv2d(16, 32, kernel_size),
             torch.nn.ReLU(),
-            torch.nn.Conv2d(32, 64, 7),
+            torch.nn.Conv2d(32, 64, kernel_size),
+            torch.nn.ReLU(),
+            torch.nn.Conv2d(64, 128, kernel_size),
+            torch.nn.ReLU(),
+            torch.nn.Conv2d(128, 128, kernel_size),
             torch.nn.Flatten(),
-            torch.nn.Linear(3625216, 3),
+            torch.nn.Linear(3200, 1024),
+            torch.nn.ReLU(),
+            torch.nn.Linear(1024, 3),
             torch.nn.Softmax()
         )
 
     def forward(self, x):
-        return self.layers(x)
+        x = self.layers(x)
+        # print(x.shape)
+        return x
 
 
-def train(model, data_loader, device, epochs=1, lr=0.01):
+def train(model, data_loader, device, epochs=10, lr=0.01):
     optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-    writer = SummaryWriter(log_dir='runs')
+    writer = SummaryWriter(log_dir=f'runs/classifier/{time()}')
     batch_idx = 0
     for epoch in range(epochs):
         for img, label in data_loader:

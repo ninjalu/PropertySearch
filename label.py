@@ -12,7 +12,8 @@ def create_csv(root='./data/', out_name='labels.csv'):
     # create empty dataframe with file_path and label columns
     df = pd.DataFrame(columns=['file_path', 'label'])
     for i, path in enumerate(subfolders):
-        files = [f.path for f in os.scandir(path) if f.is_file()]
+        files = [f.path for f in os.scandir(
+            path) if f.is_file() and f.path.split('/')[-1] != '.DS_Store']
         for f in files:
             # add each image as a row to the dataframe
             df = df.append({'file_path': f, 'label': i}, ignore_index=True)
