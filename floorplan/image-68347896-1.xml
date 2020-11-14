@@ -1,0 +1,26 @@
+<annotation>
+	<folder>floorplan</folder>
+	<filename>image-68347896-1.jpg</filename>
+	<path>/Users/luluo/projects/floorplan/image-68347896-1.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>600</width>
+		<height>573</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>GrossArea</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>19</xmin>
+			<ymin>42</ymin>
+			<xmax>510</xmax>
+			<ymax>67</ymax>
+		</bndbox>
+	</object>
+</annotation>

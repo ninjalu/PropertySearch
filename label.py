@@ -21,5 +21,5 @@ def create_csv(root='./data/', out_name='labels.csv'):
 
 
 if __name__ == '__main__':
-    create_csv(root='./propertyimages/')
+    create_csv(root='./propertyimages/validation/')
 # %%

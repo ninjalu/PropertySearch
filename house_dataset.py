@@ -8,7 +8,7 @@ import pandas as pd
 
 
 class ClassificationDataset(torch.utils.data.Dataset):
-    def __init__(self, csv='./propertyimages/labels.csv', transform=None):
+    def __init__(self, csv, transform=None):
         super().__init__()
         self.csv = pd.read_csv(csv)  # read the data csv
         self.transform = transform  # save the transform variable as part of the class object
