@@ -1,7 +1,6 @@
 # %%
 import seaborn as sns
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import matplot
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from torchvision import transforms
@@ -20,39 +19,40 @@ data_transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225])
 ])
 
-data_dir = 'propertyimages/garden/image_list.csv'
+data_dir = 'propertyimages/interior/image_list.csv'
 batch_size = 4
 data = AEDataset(data_dir, transform=data_transform)
 data_loader = torch.utils.data.DataLoader(
     data, batch_size=batch_size, shuffle=True)
 
-# %%
+# # %%
+# # Hide
 
 
-def train(model, data_loader, device, epochs=3, lr=0.0001):
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    batch_train_idx = 0
-    for epoch in range(epochs):
-        for img, label in data_loader:
-            # img = img.to(device)
-            # label = label.to(device)
-            pred = model(img)
-            # print(pred.shape)
-            loss_train = F.mse_loss(pred, label)
-            loss_train.backward()
-            optimizer.step()
-            optimizer.zero_grad()
-            print('Loss train:', loss_train.item(), batch_train_idx)
-            batch_train_idx += 1
-            break
+# def train(model, data_loader, device, epochs=3, lr=0.0001):
+#     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+#     batch_train_idx = 0
+#     for epoch in range(epochs):
+#         for img, label in data_loader:
+#             # img = img.to(device)
+#             # label = label.to(device)
+#             pred = model(img)
+#             # print(pred.shape)
+#             loss_train = F.mse_loss(pred, label)
+#             loss_train.backward()
+#             optimizer.step()
+#             optimizer.zero_grad()
+#             print('Loss train:', loss_train.item(), batch_train_idx)
+#             batch_train_idx += 1
+#             break
 
 
-# %%
-# model = ResNet_VAE()
-model = SimpleAE()
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# # %%
+# # Hide
+# model = SimpleAE()
+# device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-train(model, data_loader, device)
+# train(model, data_loader, device)
 
 # %%
 model = SimpleAE()
@@ -84,7 +84,6 @@ len(latent[0][1])
 # %%
 img_paths = [latent[i][0] for i in range(len(latent))]
 latent_rep = [latent[i][1] for i in range(len(latent))]
-img_paths[:5]
 
 # # %%
 # df_lat = pd.DataFrame(features)
@@ -94,7 +93,7 @@ img_paths[:5]
 # img = Image.open(latent[0][0]).convert('RGB')
 # img.show()
 # %%
-tene = TSNE().fit_transform(latent_rep[:10])
+tene = TSNE().fit_transform(latent_rep[:100])
 x = tene[:, 0]
 y = tene[:, 1]
 # %%

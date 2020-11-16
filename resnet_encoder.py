@@ -34,9 +34,10 @@ class ResnetEncoder(nn.Module):
 model = ResnetEncoder()
 model = model.eval()
 # %%
-data_dir = 'propertyimages/garden/image_list.csv'
+data_dir = 'propertyimages/exterior/image_list.csv'
 data_transform = transforms.Compose([
     transforms.Resize((256, 256)),
+    transforms.CenterCrop((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.405],
                          std=[0.229, 0.224, 0.225])
@@ -62,7 +63,7 @@ latent = get_latent_rep(model, data_dir, data_transform)
 # %%
 img_paths = [latent[i][0] for i in range(len(latent))]
 latent_rep = [latent[i][1] for i in range(len(latent))]
-tene = TSNE().fit_transform(latent_rep[:10])
+tene = TSNE().fit_transform(latent_rep[:100])
 x = tene[:, 0]
 y = tene[:, 1]
 # %%
@@ -75,8 +76,11 @@ def getImage(path, size):
 
 
 # %%
+plt.rcParams["figure.figsize"] = (30, 30)
 fig, ax = plt.subplots()
 ax.scatter(x, y)
 for x0, y0, path in zip(x, y, img_paths):
-    ab = AnnotationBbox(getImage(path, (60, 60)), (x0, y0), frameon=False)
+    ab = AnnotationBbox(getImage(path, (80, 80)), (x0, y0), frameon=False)
     ax.add_artist(ab)
+
+# %%
