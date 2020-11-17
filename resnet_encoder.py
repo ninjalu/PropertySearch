@@ -34,7 +34,7 @@ class ResnetEncoder(nn.Module):
 model = ResnetEncoder()
 model = model.eval()
 # %%
-data_dir = 'propertyimages/exterior/image_list.csv'
+data_dir = 'propertyimages/images/image_list.csv'
 data_transform = transforms.Compose([
     transforms.Resize((256, 256)),
     transforms.CenterCrop((224, 224)),

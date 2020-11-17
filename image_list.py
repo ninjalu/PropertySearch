@@ -18,6 +18,6 @@ def image_list(path, out_name='image_list.csv'):
 
 
 if __name__ == '__main__':
-    image_list('propertyimages/interior/')
+    image_list('propertyimages/images/')
 
 # %%
