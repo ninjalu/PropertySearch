@@ -1,16 +1,15 @@
 # %%
-import seaborn as sns
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-from sklearn.manifold import TSNE
-import matplotlib.pyplot as plt
+
+
 from torchvision import transforms
 import torch.nn.functional as F
 import torch
 from PIL import Image
 from time import time
 import numpy as np
-from modules import AEDataset, SimpleAE
+from modules import AEDataset, SimpleAE, vis_tsne, vis_tb
 import pandas as pd
+import pickle
 # %%
 data_transform = transforms.Compose([
     transforms.Resize((256, 256)),
@@ -24,9 +23,6 @@ batch_size = 4
 data = AEDataset(data_dir, transform=data_transform)
 data_loader = torch.utils.data.DataLoader(
     data, batch_size=batch_size, shuffle=True)
-
-# # %%
-# # Hide
 
 
 # def train(model, data_loader, device, epochs=3, lr=0.0001):
@@ -44,11 +40,8 @@ data_loader = torch.utils.data.DataLoader(
 #             optimizer.zero_grad()
 #             print('Loss train:', loss_train.item(), batch_train_idx)
 #             batch_train_idx += 1
-#             break
 
 
-# # %%
-# # Hide
 # model = SimpleAE()
 # device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -57,7 +50,7 @@ data_loader = torch.utils.data.DataLoader(
 # %%
 model = SimpleAE()
 model.load_state_dict(torch.load(
-    '/Users/luluo/projects/propertySearch/models/ae.pt', map_location=torch.device('cpu')))
+    '/Users/luluo/projects/propertySearch/models/ae-all.pt', map_location=torch.device('cpu')))
 # %%
 model = model.eval()
 
@@ -80,36 +73,17 @@ def get_latent_rep(model, csv, transform):
 
 latent = get_latent_rep(model, data_dir, data_transform)
 # %%
-len(latent[0][1])
+with open('latent.pickle', 'wb') as f:
+    pickle.dump(latent, f)
 # %%
-img_paths = [latent[i][0] for i in range(len(latent))]
-latent_rep = [latent[i][1] for i in range(len(latent))]
-
-# # %%
-# df_lat = pd.DataFrame(features)
-# df_lat.head()
-# # %%
-# # %%
-# img = Image.open(latent[0][0]).convert('RGB')
-# img.show()
+with open('latent.pickle', 'rb') as f:
+    latent = pickle.load(f)
 # %%
-tene = TSNE().fit_transform(latent_rep[:100])
-x = tene[:, 0]
-y = tene[:, 1]
-# %%
-
-
-def getImage(path, size):
-    image = Image.open(path)
-    image = image.resize(size)
-    return OffsetImage(image)
-
+# Visualising in tSNE
+vis_tsne(latent[:200], 80, 60)
 
 # %%
-fig, ax = plt.subplots()
-ax.scatter(x, y)
-for x0, y0, path in zip(x, y, img_paths):
-    ab = AnnotationBbox(getImage(path, (60, 60)), (x0, y0), frameon=False)
-    ax.add_artist(ab)
+# Visualisation in tensorboard
+vis_tb(latent[:500], 120)
 
 # %%

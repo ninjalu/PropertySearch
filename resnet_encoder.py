@@ -2,6 +2,7 @@
 import seaborn as sns
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from torchvision import transforms
 import torch.nn.functional as F
@@ -66,6 +67,10 @@ latent_rep = [latent[i][1] for i in range(len(latent))]
 tene = TSNE().fit_transform(latent_rep[:100])
 x = tene[:, 0]
 y = tene[:, 1]
+# %%
+pca = PCA(n_components=2).fit_transform(latent_rep[:100], )
+x = pca[:, 0]
+y = pca[:, 1]
 # %%
 
 
