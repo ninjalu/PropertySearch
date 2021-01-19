@@ -1,4 +1,4 @@
-# PropertySearch
+# PropertySearch (In progress)
 The aim of this poject is to create a recommender system for new listings on Rightmove based on image embeddings of exterior, interior and garden preference (content).
 
 ## 1. Data collection:
